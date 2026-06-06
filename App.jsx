@@ -14,8 +14,12 @@ export default function App() {
     return JSON.parse(localStorage.getItem("foodLogs")) || {};
   });
 
-  const [proteinLogs, setProteinLogs] = useState(() => {
-    return JSON.parse(localStorage.getItem("proteinLogs")) || {};
+  const [workoutLogs, setWorkoutLogs] = useState(() => {
+    return JSON.parse(localStorage.getItem("workoutLogs")) || {};
+  });
+
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("theme") || "dark";
   });
 
   useEffect(() => {
@@ -27,8 +31,17 @@ export default function App() {
   }, [foodLogs]);
 
   useEffect(() => {
-    localStorage.setItem("proteinLogs", JSON.stringify(proteinLogs));
-  }, [proteinLogs]);
+    localStorage.setItem("workoutLogs", JSON.stringify(workoutLogs));
+  }, [workoutLogs]);
+
+  useEffect(() => {
+    document.body.className = theme === "light" ? "light-theme" : "";
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
 
   const previousMonth = () => {
     setCurrentDate(
@@ -56,10 +69,10 @@ export default function App() {
     }));
   };
 
-  const updateProtein = (val) => {
-    setProteinLogs((prev) => ({
+  const updateWorkout = (text) => {
+    setWorkoutLogs((prev) => ({
       ...prev,
-      [selectedDate]: val,
+      [selectedDate]: text,
     }));
   };
 
@@ -134,17 +147,21 @@ export default function App() {
     { weekday: "long", month: "long", day: "numeric", year: "numeric" }
   );
 
-  // Protein targets
-  const currentProtein = parseInt(proteinLogs[selectedDate]) || 0;
-  const proteinGoal = 130; // 130g target
-  const proteinPercent = Math.min(100, Math.round((currentProtein / proteinGoal) * 100));
-
   return (
     <div className="app-container">
-      <header className="app-header">
-        <h1 className="app-title">💪 Gym Tracker</h1>
-        <p className="app-subtitle">Track your training days, protein intake, and meals</p>
-      </header>
+      <div className="header-container">
+        <header className="app-header">
+          <h1 className="app-title">💪 Gym Tracker</h1>
+          <p className="app-subtitle">Track your training days, exercises, and meals</p>
+        </header>
+        <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Toggle theme">
+          {theme === "dark" ? (
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          )}
+        </button>
+      </div>
 
       <div className="stats-grid">
         <Card title="Gym Days This Month" value={monthlyCount} icon="calendar" />
@@ -226,7 +243,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Notes and Nutrition Section */}
+        {/* Notes and Workout Section */}
         <div className="card">
           <h2 className="card-title">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
@@ -239,37 +256,18 @@ export default function App() {
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="protein-input">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>
-              Protein Intake
+            <label className="form-label" htmlFor="workout-textarea">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6.5 6.5h11M6.5 17.5h11M18.5 5.5v13M5.5 5.5v13M21.5 8v8M2.5 8v8M9.5 12h5"></path></svg>
+              Today's Workout
             </label>
-            <div className="protein-input-container">
-              <div className="protein-input-wrapper">
-                <input
-                  id="protein-input"
-                  type="number"
-                  min="0"
-                  max="500"
-                  value={proteinLogs[selectedDate] || ""}
-                  onChange={(e) => updateProtein(e.target.value)}
-                  placeholder="0"
-                  className="protein-input"
-                />
-                <span className="protein-unit-label">grams</span>
-              </div>
-            </div>
-            <div className="protein-progress-container">
-              <div
-                className="protein-progress-bar"
-                style={{ width: `${proteinPercent}%` }}
-              ></div>
-            </div>
-            <div className="protein-stats-summary">
-              <span>Goal: {proteinGoal}g</span>
-              <span>
-                {currentProtein}g / {proteinGoal}g ({proteinPercent}%)
-              </span>
-            </div>
+            <textarea
+              id="workout-textarea"
+              value={workoutLogs[selectedDate] || ""}
+              onChange={(e) => updateWorkout(e.target.value)}
+              placeholder="What exercises did you do today? e.g. Squats 3x10, Bench Press 4x8..."
+              className="food-textarea"
+              style={{ minHeight: "110px" }}
+            />
           </div>
 
           <div className="form-group">
@@ -281,8 +279,9 @@ export default function App() {
               id="food-textarea"
               value={foodLogs[selectedDate] || ""}
               onChange={(e) => updateFood(e.target.value)}
-              placeholder="Record your meals, supplements, and workout notes..."
+              placeholder="Record your meals, water intake, supplements..."
               className="food-textarea"
+              style={{ minHeight: "110px" }}
             />
           </div>
         </div>
