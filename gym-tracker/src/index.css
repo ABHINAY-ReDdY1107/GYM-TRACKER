@@ -32,6 +32,28 @@
   box-sizing: border-box;
 }
 
+body.light-theme {
+  --bg-gradient: radial-gradient(circle at top, #f7f6f9 0%, #ebeaef 100%);
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --card-border: rgba(196, 169, 109, 0.2);
+  --card-border-active: rgba(196, 169, 109, 0.5);
+  
+  --text-primary: #1e1b24;
+  --text-secondary: #5f5d68;
+  --text-muted: #8e8b95;
+  
+  --gold: #aa820a;
+  --gold-light: #806103;
+  --gold-dark: #664d02;
+  --gold-glow: rgba(170, 130, 10, 0.12);
+  --gold-glow-strong: rgba(170, 130, 10, 0.25);
+  
+  --dark-btn-bg: #eae8ef;
+  --dark-btn-hover: #dad7e2;
+  
+  --shadow-premium: 0 15px 35px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
 *, *:before, *:after {
   box-sizing: inherit;
 }
@@ -70,9 +92,17 @@ body {
 }
 
 /* Header Section */
+.header-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
 .app-header {
   text-align: center;
-  margin-bottom: 40px;
 }
 
 .app-title {
@@ -80,7 +110,7 @@ body {
   font-size: 3.2rem;
   font-weight: 600;
   margin: 0 0 10px 0;
-  background: linear-gradient(135deg, #fff 30%, var(--gold-light) 70%, var(--gold) 100%);
+  background: linear-gradient(135deg, var(--text-primary) 30%, var(--gold-light) 70%, var(--gold) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-flex;
@@ -89,12 +119,54 @@ body {
   letter-spacing: -0.5px;
 }
 
+body.light-theme .app-title {
+  background: linear-gradient(135deg, #1e1b24 30%, var(--gold) 70%, var(--gold-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .app-subtitle {
   color: var(--text-secondary);
   font-size: 1.1rem;
   font-weight: 300;
   margin: 0;
   letter-spacing: 0.5px;
+}
+
+.theme-toggle-btn {
+  position: absolute;
+  right: 0;
+  top: 10px;
+  background: var(--dark-btn-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  z-index: 10;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--dark-btn-hover);
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+  .theme-toggle-btn {
+    position: static;
+  }
 }
 
 /* Stats Cards Grid */
