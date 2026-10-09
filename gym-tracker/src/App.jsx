@@ -60,12 +60,12 @@ const PAGES = [
   },
   {
     id: "dailyQuiz",
-    name: "Daily Quiz",
-    title: "Daily Quiz Tracker",
+    name: "Brain Activity",
+    title: "Brain Activity Tracker",
     emoji: "🧠",
     subtitle: "Track daily quiz questions, performance, and learnings",
-    statLabel: "Quiz Days This Month",
-    legendActive: "Quiz Day (Double-click to toggle)",
+    statLabel: "Brain Activity Days This Month",
+    legendActive: "Brain Activity Day (Double-click to toggle)",
     label1: "Quiz Performance / Topics",
     label2: "Learnings & Corrections",
     placeholder1: "What quiz did you take? e.g. Current Affairs, Math, Coding Quiz...",
@@ -79,12 +79,12 @@ const PAGES = [
   },
   {
     id: "topicOfTheDay",
-    name: "Topic of the Day",
-    title: "Topic of the Day Tracker",
+    name: "Reading",
+    title: "Reading Tracker",
     emoji: "📚",
     subtitle: "Track daily research topics, concepts, and key details",
-    statLabel: "Topic Days This Month",
-    legendActive: "Topic Day (Double-click to toggle)",
+    statLabel: "Reading Days This Month",
+    legendActive: "Reading Day (Double-click to toggle)",
     label1: "Topic Studied / Researched",
     label2: "Summary & Key Concepts",
     placeholder1: "What was the main topic you studied today? e.g. Quantum Computing, French History...",
@@ -110,6 +110,25 @@ const PAGES = [
     placeholder2: "Detail the specific concepts covered, doubts, or review notes...",
     icon1: (
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+    ),
+    icon2: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+    )
+  },
+  {
+    id: "minoxidil",
+    name: "Minoxidil",
+    title: "Minoxidil Tracker",
+    emoji: "🧴",
+    subtitle: "Track your daily Minoxidil application and scalp routine",
+    statLabel: "Minoxidil Days This Month",
+    legendActive: "Minoxidil Day (Double-click to toggle)",
+    label1: "Dosage & Application Time",
+    label2: "Scalp Routine & Notes",
+    placeholder1: "e.g. 1ml applied morning/night...",
+    placeholder2: "Record any scalp observations, derma rolling, or progress notes...",
+    icon1: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
     ),
     icon2: (
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
@@ -190,6 +209,17 @@ export default function App() {
     return JSON.parse(localStorage.getItem("studyNotes")) || {};
   });
 
+  // Minoxidil
+  const [minoxidilDays, setMinoxidilDays] = useState(() => {
+    return JSON.parse(localStorage.getItem("minoxidilDays")) || {};
+  });
+  const [minoxidilLogs, setMinoxidilLogs] = useState(() => {
+    return JSON.parse(localStorage.getItem("minoxidilLogs")) || {};
+  });
+  const [minoxidilNotes, setMinoxidilNotes] = useState(() => {
+    return JSON.parse(localStorage.getItem("minoxidilNotes")) || {};
+  });
+
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "dark";
   });
@@ -255,6 +285,16 @@ export default function App() {
   }, [studyNotes]);
 
   useEffect(() => {
+    localStorage.setItem("minoxidilDays", JSON.stringify(minoxidilDays));
+  }, [minoxidilDays]);
+  useEffect(() => {
+    localStorage.setItem("minoxidilLogs", JSON.stringify(minoxidilLogs));
+  }, [minoxidilLogs]);
+  useEffect(() => {
+    localStorage.setItem("minoxidilNotes", JSON.stringify(minoxidilNotes));
+  }, [minoxidilNotes]);
+
+  useEffect(() => {
     document.body.className = theme === "light" ? "light-theme" : "";
     localStorage.setItem("theme", theme);
   }, [theme]);
@@ -283,6 +323,7 @@ export default function App() {
       case "dailyQuiz": return dailyQuizDays;
       case "topicOfTheDay": return topicOfTheDayDays;
       case "study": return studyDays;
+      case "minoxidil": return minoxidilDays;
       default: return gymDays;
     }
   };
@@ -294,6 +335,7 @@ export default function App() {
       case "dailyQuiz": return dailyQuizLogs;
       case "topicOfTheDay": return topicOfTheDayLogs;
       case "study": return studyLogs;
+      case "minoxidil": return minoxidilLogs;
       default: return workoutLogs;
     }
   };
@@ -305,6 +347,7 @@ export default function App() {
       case "dailyQuiz": return dailyQuizNotes;
       case "topicOfTheDay": return topicOfTheDayNotes;
       case "study": return studyNotes;
+      case "minoxidil": return minoxidilNotes;
       default: return foodLogs;
     }
   };
@@ -317,6 +360,7 @@ export default function App() {
       case "dailyQuiz": setDailyQuizDays(updateFn); break;
       case "topicOfTheDay": setTopicOfTheDayDays(updateFn); break;
       case "study": setStudyDays(updateFn); break;
+      case "minoxidil": setMinoxidilDays(updateFn); break;
       default: setGymDays(updateFn); break;
     }
   };
@@ -329,6 +373,7 @@ export default function App() {
       case "dailyQuiz": setDailyQuizLogs(updateFn); break;
       case "topicOfTheDay": setTopicOfTheDayLogs(updateFn); break;
       case "study": setStudyLogs(updateFn); break;
+      case "minoxidil": setMinoxidilLogs(updateFn); break;
       default: setWorkoutLogs(updateFn); break;
     }
   };
@@ -341,6 +386,7 @@ export default function App() {
       case "dailyQuiz": setDailyQuizNotes(updateFn); break;
       case "topicOfTheDay": setTopicOfTheDayNotes(updateFn); break;
       case "study": setStudyNotes(updateFn); break;
+      case "minoxidil": setMinoxidilNotes(updateFn); break;
       default: setFoodLogs(updateFn); break;
     }
   };
